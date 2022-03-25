@@ -1,9 +1,11 @@
 ﻿<template>
   <el-container>
     <el-header>
-      <el-input v-model="sdata.name" style="width:200px" />
+      <el-input v-model="sdata.name" style="width:200px;margin-right:10px" />
       <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="success" @click="reset()">重置</el-button>
+      <el-button type="primary" icon="el-icon-plus" @click="add()">新增</el-button>
+      <el-button type="danger" plain @click="excel(0)">导出</el-button>
     </el-header>
     <el-main>
       <el-table v-loading="page.loading" :data="gridData.list" @selection-change="handleSelectionChange" @sort-change="handleSortChange">
@@ -13,6 +15,19 @@
         <el-table-column label="学历" property="education" />
         <el-table-column label="生日" property="birthday" sortable="custom" />
         <el-table-column label="注释说明" property="mimo" />
+        <el-table-column label="操作" fixed="right">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              @click="handleEdit(scope.$index, scope.row)"
+            >编辑</el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+            >删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-main>
     <el-footer>
@@ -102,6 +117,16 @@ export default {
     handleCurrentChange(val) {
       config.pageNum = val
       list_data_module(this)
+    },
+    // 自定义脚本
+    add() {
+      this.$emit('add', null)
+    },
+    handleEdit(index, row) {
+      this.$emit('handleEdit', row.fid)
+    },
+    handleDelete(index, row) {
+      this.$emit('handleDelete', row.fid)
     }
   }
 }
@@ -134,19 +159,20 @@ function reset_build(vm) {
 }
 // 载入前脚本，return false为阻止
 function js_beforeload(vm) {
+  vm.$emit('beforeLoad', vm)
   return true
 }
 // 赋值前脚本，return false为阻止
 function js_beforeset(vm, resData) {
 // resData为接口返回对象
+  vm.$emit('beforeSet', vm)
   return true
 }
 // 赋值后脚本
 function js_afterset(vm, resData) {
 // resData为接口返回对象
+  vm.$emit('afterLoad', vm)
 }
-// 自定义脚本
-
 </script>
 <style>
 .el-header, .el-footer {

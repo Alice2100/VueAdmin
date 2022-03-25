@@ -1,18 +1,63 @@
 <template>
-  <div>
+  <div class="main">
     <el-row>
-      <Warning />
-      <test_list /></el-row>
+      <test_list ref="test_list" @add="listAdd" @handleEdit="listEdit" @handleDelete="listDelete" />
+    </el-row>
+    <el-dialog title="新增" :visible.sync="addDialogVisible" width="60%">
+      <test_add ref="test_add" @cancel="addCancel" @afterSubmit="addAfterSubmit" />
+    </el-dialog>
+    <el-dialog title="编辑" :visible.sync="modDialogVisible" width="60%" @opened="modDialogOpened">
+      <test_mod ref="test_mod" @cancel="modCancel" @afterSubmit="modAfterSubmit" />
+    </el-dialog>
   </div>
+
 </template>
 <script>
-// import test1 from '@/ftdp/components/test1'
 import test_list from '@/ftdp/components/test_list'
-import Warning from '@/views/example/components/Warning'
+import test_add from '@/ftdp/components/test_add'
+import test_mod from '@/ftdp/components/test_mod'
 export default {
-  components: { test_list, Warning },
+  components: { test_list, test_add, test_mod },
   data() {
-    return {}
+    return {
+      addDialogVisible: false,
+      modDialogVisible: false,
+      modId: null
+    }
+  },
+  methods: {
+    listAdd() {
+      this.addDialogVisible = true
+    },
+    listEdit(id) {
+      this.modId = id
+      this.modDialogVisible = true
+    },
+    modDialogOpened() {
+      this.$refs.test_mod.fill(this.modId)
+    },
+    listDelete(id) {
+    },
+    addCancel() {
+      this.addDialogVisible = false
+    },
+    addAfterSubmit() {
+      this.addDialogVisible = false
+      this.$refs.test_list.load()
+      this.$refs.test_add.reset()
+    },
+    modCancel() {
+      this.modDialogVisible = false
+    },
+    modAfterSubmit() {
+      this.modDialogVisible = false
+      this.$refs.test_list.load()
+    }
   }
 }
 </script>
+<style>
+  .main {
+    margin:20px;
+  }
+</style>

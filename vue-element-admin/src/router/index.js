@@ -56,11 +56,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/t1',
-    component: () => import('@/views/test/t1'),
-    hidden: true
-  },
-  {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
@@ -85,6 +80,43 @@ export const constantRoutes = [
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
         meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/test',
+    component: Layout,
+    redirect: '/test/t1',
+    alwaysShow: true, // will always show the root menu
+    name: 'Test',
+    meta: {
+      title: 'Low Code 示例',
+      icon: 'tree'
+    },
+    children: [
+      {
+        path: 't1',
+        component: () => import('@/views/test/t1'),
+        name: 'testT1',
+        meta: {
+          title: '示例1'
+        }
+      },
+      {
+        path: 't2',
+        component: () => import('@/views/test/t2'),
+        name: 'testT2',
+        meta: {
+          title: '示例2'
+        }
+      },
+      {
+        path: 't3',
+        component: () => import('@/views/test/t3'),
+        name: 'testT3',
+        meta: {
+          title: '示例3'
+        }
       }
     ]
   },
