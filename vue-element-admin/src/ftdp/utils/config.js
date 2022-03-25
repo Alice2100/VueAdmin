@@ -1,6 +1,6 @@
 // 全局配置
 var ftdpConfig = {
-  apiBase: 'http://localhost',
+  apiBase: 'http://113.31.106.229:81',
   apiBase2: '',
   apiBase3: '',
   apiBase4: '',
