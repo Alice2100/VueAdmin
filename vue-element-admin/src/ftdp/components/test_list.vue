@@ -118,6 +118,12 @@ export default {
       config.pageNum = val
       list_data_module(this)
     },
+    get(apiPath, paras, callback) {
+      ftdpBase.normal_get(this, ftdpConfig, apiPath, paras, callback)
+    },
+    post(apiPath, paras, json, callback) {
+      ftdpBase.normal_post(this, ftdpConfig, apiPath, paras, json, callback)
+    },
     // 自定义脚本
     add() {
       this.$emit('add', null)
@@ -126,7 +132,20 @@ export default {
       this.$emit('handleEdit', row.fid)
     },
     handleDelete(index, row) {
-      this.$emit('handleDelete', row.fid)
+      this.$confirm('确定要删除吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.post('/test/test2?delete', row.fid, null, () => {
+          this.load()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   }
 }

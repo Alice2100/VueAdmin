@@ -6,7 +6,7 @@
     <el-dialog title="新增" :visible.sync="addDialogVisible" width="60%">
       <test_add ref="test_add" @cancel="addCancel" @afterSubmit="addAfterSubmit" />
     </el-dialog>
-    <el-dialog title="编辑" :visible.sync="modDialogVisible" width="60%" @opened="modDialogOpened">
+    <el-dialog title="编辑" :visible.sync="modDialogVisible" width="60%" @opened="modDialogOpened" @closed="modDialogClosed">
       <test_mod ref="test_mod" @cancel="modCancel" @afterSubmit="modAfterSubmit" />
     </el-dialog>
   </div>
@@ -35,6 +35,9 @@ export default {
     },
     modDialogOpened() {
       this.$refs.test_mod.fill(this.modId)
+    },
+    modDialogClosed() {
+      this.$refs.test_mod.reset(true)
     },
     listDelete(id) {
     },

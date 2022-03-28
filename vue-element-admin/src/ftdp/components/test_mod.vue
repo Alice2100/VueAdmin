@@ -1,5 +1,5 @@
 ﻿<template>
-  <el-form ref="form" :model="form" label-width="200px" label-position="left">
+  <el-form ref="form" v-loading="page.loading" :model="form" label-width="200px" label-position="left">
     <el-form-item label="客户姓名">
       <el-input v-model="form.name" />
     </el-form-item>
@@ -80,11 +80,8 @@ export default {
       form_paras = paras
       ftdpBase.form_fill(config, this, form_paras, (obj) => { form_fill_json(obj, this); oriform = JSON.stringify(form) }, () => { return js_beforeget(this) }, (resData) => { return js_beforeset(this, resData) }, (resData) => { js_afterset(this, resData) })
     },
-    reset() {
-      form_paras = ''
-      var oform = JSON.parse(oriform)
-      var keys = Object.keys(form)
-      for (var ii = 0; ii < keys.length; ii++) if (oform[keys[ii]] != null)form[keys[ii]] = oform[keys[ii]]
+    reset(allEmpty) {
+      ftdpBase.form_reset(form, oriform, allEmpty)
     },
     func(f) {
       const Fn = Function

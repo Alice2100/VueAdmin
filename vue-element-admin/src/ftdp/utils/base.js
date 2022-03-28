@@ -7,7 +7,10 @@ var ftdpBase = {
   list_excel: function(config, vm, maxRow, exportName) { return list_excel(config, vm, maxRow, exportName) },
   optionsJson: function(config, vm, apiUrl, callBack) { return optionsJson(config, vm, apiUrl, callBack) },
   form_fill: function(config, vm, form_paras, func, func_beforeget, func_beforeset, func_afterset) { return form_fill(config, vm, form_paras, func, func_beforeget, func_beforeset, func_afterset) },
-  form_submit: function(config, vm, form_paras, json, func) { return form_submit(config, vm, form_paras, json, func) }
+  form_reset: function(form, oriform, allEmpty) { return form_reset(form, oriform, allEmpty) },
+  form_submit: function(config, vm, form_paras, json, func) { return form_submit(config, vm, form_paras, json, func) },
+  normal_get: function(vm, ftdpConfig, apiPath, getParas, func) { return normal_get(vm, ftdpConfig, apiPath, getParas, func) },
+  normal_post: function(vm, ftdpConfig, apiPath, postParas, json, func) { return normal_post(vm, ftdpConfig, apiPath, postParas, json, func) }
 }
 // 通用
 function list_json(config, isExport, exportMax, exportName) {
@@ -158,6 +161,19 @@ function form_fill(config, vm, form_paras, func, func_beforeget, func_beforeset,
       console.log(Error)
     })
 }
+// 表单重置
+function form_reset(form, oriform, allEmpty) {
+  var keys = Object.keys(form)
+  if (allEmpty) {
+    for (var i = 0; i < keys.length; i++) {
+      if (form[keys[i]]['selValue'] != null)form[keys[i]]['selValue'] = ''
+      else form[keys[i]] = ''
+    }
+    return
+  }
+  var oform = JSON.parse(oriform)
+  for (i = 0; i < keys.length; i++) if (oform[keys[i]] != null)form[keys[i]] = oform[keys[i]]
+}
 // 表单提交
 function form_submit(config, vm, form_paras, json, func) {
   if (config.apiSet == null) return
@@ -171,6 +187,58 @@ function form_submit(config, vm, form_paras, json, func) {
     method: 'post',
     headers: header,
     data: JSON.stringify(json)
+  })
+    .then(res => {
+      console.log(res.data)
+      if (res.data.code == 200) {
+        vm.$message({ message: '操作成功', type: 'success' })
+        if (func != null)func()
+      } else {
+        vm.$message.error(res.data.msg)
+      }
+	    vm.$set(vm.page, 'loading', false)
+    })
+    .catch(Error => {
+      console.log(Error)
+    })
+}
+// 一般性数据获取
+function normal_get(vm, ftdpConfig, apiPath, getParas, func) {
+  vm.$set(vm.page, 'loading', true)
+  var paras = getParas
+  if (paras != '' && paras[0] != '/')paras = '/' + paras
+  var header = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+  header[ftdpConfig.tokenKey] = ftdpConfig.tokenVal
+  axios({
+    url: ftdpConfig.apiBase + apiPath + paras,
+    method: 'get',
+    headers: header
+  })
+    .then(res => {
+      console.log(res.data)
+      if (res.data.code == 200) {
+        if (func != null)func(res.data.data.detail)
+      } else {
+        vm.$message.error(res.data.msg)
+      }
+	    vm.$set(vm.page, 'loading', false)
+    })
+    .catch(Error => {
+      console.log(Error)
+    })
+}
+// 一般性数据操作
+function normal_post(vm, ftdpConfig, apiPath, postParas, json, func) {
+  vm.$set(vm.page, 'loading', true)
+  var paras = postParas
+  if (paras != '' && paras[0] != '/')paras = '/' + paras
+  var header = { 'Content-Type': 'application/json; charset=UTF-8' }
+  header[ftdpConfig.tokenKey] = ftdpConfig.tokenVal
+  axios({
+    url: ftdpConfig.apiBase + apiPath + paras,
+    method: 'post',
+    headers: header,
+    data: json == null ? '' : JSON.stringify(json)
   })
     .then(res => {
       console.log(res.data)
