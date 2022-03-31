@@ -2,6 +2,12 @@
   <el-container>
     <el-header>
       <el-input v-model="sdata.name" style="width:200px;margin-right:10px" />
+      <el-select v-model="sdata.sex.selValue" style="width:200px;margin-right:10px">
+        <el-option v-for="item in sdata.sex.options" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select v-model="sdata.education.selValue" style="width:200px;margin-right:10px">
+        <el-option v-for="item in sdata.education.options" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
       <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="success" @click="reset()">重置</el-button>
       <el-button type="primary" icon="el-icon-plus" @click="add()">新增</el-button>
@@ -54,9 +60,18 @@ var config = {
 }
 // 搜索数据定义
 var sdata = {
-  name: ''
+  name: '',
+  sex: {
+    options: [{ value: '', label: '性别' }, { value: '1', label: '男' }, { value: '0', label: '女' }],
+    selValue: ''
+  },
+  education: {
+    options: [{ value: '', label: '学历' }],
+    selValue: ''
+  }
 }
 
+var orisdata = '{}'
 export default {
   props: {
     loadauto: {
@@ -74,6 +89,7 @@ export default {
   },
   mounted: function() {
     init(this)
+    orisdata = JSON.stringify(sdata)
     if (this.loadauto === '1')list_data_module(this)
   },
   methods: {
@@ -85,6 +101,7 @@ export default {
       list_data_module(this)
     },
     reset() {
+      ftdpBase.list_reset(sdata, orisdata)
       reset_build(this)
       list_data_module(this)
     },
@@ -161,11 +178,14 @@ function init(vm) {
   config.schStrict = ''
   config.pageSize = 12
   config.pageNum = 1
+  ftdpBase.optionsJson(config, vm, apiBase + '/test/test2?dic/education', function(json) { sdata.education.options = sdata.education.options.concat(json) })
 }
 // 查询参数组织
 function search_build(vm) {
-  config.schText = ''
-  config.schStrict = 'name:%' + sdata.name + '%'
+  config.schStrict = '' +
+		';name:%' + sdata.name + '%' +
+		';sex:' + sdata.sex.selValue +
+		';education:' + sdata.education.selValue
 }
 // 重置时的组织
 function reset_build(vm) {

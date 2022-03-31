@@ -4,6 +4,7 @@ import axios from 'axios'
 var ftdpBase = {
   list_json: function(config, isExport, exportMax, exportName) { return list_json(config, isExport, exportMax, exportName) },
   list_data: function(config, vm, func_beforeload, func_beforeset, func_afterset) { return list_data(config, vm, func_beforeload, func_beforeset, func_afterset) },
+  list_reset: function(sdata, orisdata) { return list_reset(sdata, orisdata) },
   list_excel: function(config, vm, maxRow, exportName) { return list_excel(config, vm, maxRow, exportName) },
   optionsJson: function(config, vm, apiUrl, callBack) { return optionsJson(config, vm, apiUrl, callBack) },
   form_fill: function(config, vm, form_paras, func, func_beforeget, func_beforeset, func_afterset) { return form_fill(config, vm, form_paras, func, func_beforeget, func_beforeset, func_afterset) },
@@ -58,6 +59,17 @@ function list_data(config, vm, func_beforeload, func_beforeset, func_afterset) {
     .catch(Error => {
       console.log(Error)
     })
+}
+// 表单重置
+function list_reset(sdata, orisdata) {
+  var keys = Object.keys(sdata)
+  var osdata = JSON.parse(orisdata)
+  for (var i = 0; i < keys.length; i++) {
+    if (osdata[keys[i]] != null) {
+      if (sdata[keys[i]]['selValue'] != null)sdata[keys[i]]['selValue'] = osdata[keys[i]]['selValue']
+      else sdata[keys[i]] = osdata[keys[i]]
+    }
+  }
 }
 // 通用
 function list_excel(config, vm, maxRow, exportName) {

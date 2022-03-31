@@ -56,7 +56,7 @@ var form = {
     selValue: ''
   },
   education: {
-    options: [],
+    options: [{ value: '', label: '性别' }],
     selValue: ''
   },
   birthday: '',
@@ -99,7 +99,7 @@ export default {
 var form_paras = ''
 // 初始化数据定义
 function init(vm, callback) {
-  ftdpBase.optionsJson(config, vm, apiBase + '/test/test2?dic/education', (json) => { form.education.options = json; callback() })
+  ftdpBase.optionsJson(config, vm, apiBase + '/test/test2?dic/education', (json) => { form.education.options = form.education.options.concat(json); callback() })
 
   callback()
 }
