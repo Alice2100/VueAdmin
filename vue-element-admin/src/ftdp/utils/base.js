@@ -244,7 +244,7 @@ function normal_post(vm, ftdpConfig, apiPath, postParas, json, func) {
       console.log(res.data)
       if (res.data.code == 200) {
         vm.$message({ message: '操作成功', type: 'success' })
-        if (func != null)func()
+        if (func != null)func(res.data.data)
       } else {
         vm.$message.error(res.data.msg)
       }
